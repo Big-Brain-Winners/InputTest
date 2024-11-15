@@ -27,13 +27,14 @@ class Program
         var controller = client.CreateXbox360Controller();
 
         //interrupt handler, makes program give up resources when closed with ctrl C
-        Console.CancelKeyPress += delegate {
+        Console.CancelKeyPress += delegate
+        {
             controller.Disconnect();
             client.Dispose();
             boardShim.stop_stream();
             boardShim.release_session();
         };
-        
+
         controller.Connect();
         Console.WriteLine("Xbox 360 controller connected");
 
@@ -51,6 +52,8 @@ class Program
 
     static void BoardControlLoop(BoardShim boardShim, IXbox360Controller controller)
     {
+        int threshold = 500;
+
         while (true)
         {
             Thread.Sleep(100);
@@ -60,7 +63,22 @@ class Program
 
             Xbox360Button[] emg_buttons = [Xbox360Button.A, Xbox360Button.B, Xbox360Button.X, Xbox360Button.Y];
             int buttonIndex = 0;
-            int threshold = 500;
+            if (Console.KeyAvailable)
+            {
+                var keypressed = Console.ReadKey();
+                if (keypressed.Key == ConsoleKey.W)
+                {
+                    threshold = threshold + 50;
+                }
+                else if (keypressed.Key == ConsoleKey.S)
+                {
+                    threshold = threshold - 50;
+                }
+                
+            }
+            Console.WriteLine($"Threshold: {threshold}");
+
+
             foreach (var index in emgChannels)
             {
                 var row = unprocessedData.GetRow(index);

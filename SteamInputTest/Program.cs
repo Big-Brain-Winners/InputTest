@@ -10,71 +10,90 @@ namespace SteamInputTest;
 class Program
 {
     private static readonly int _boardId = (int)BoardIds.GANGLION_BOARD;
+
     private static readonly BrainFlowInputParams _inputParams = new BrainFlowInputParams
     {
         serial_port = "COM10"
     };
-    
+
     static void Main(string[] args)
     {
+        BoardShim.enable_dev_board_logger();
+
+        BoardShim boardShim = new BoardShim(_boardId, _inputParams);
+
+
         var client = new ViGEmClient();
         var controller = client.CreateXbox360Controller();
+
+        //interrupt handler, makes program give up resources when closed with ctrl C
+        Console.CancelKeyPress += delegate {
+            controller.Disconnect();
+            client.Dispose();
+            boardShim.stop_stream();
+            boardShim.release_session();
+        };
         
         controller.Connect();
         Console.WriteLine("Xbox 360 controller connected");
-        
-        BoardShim.enable_dev_board_logger();
-        
-        BoardShim boardShim = new BoardShim(_boardId, _inputParams);
-        
-        BoardControlLoop(boardShim);
-    }
 
-    static void BoardControlLoop(BoardShim boardShim)
-    {
-        
         boardShim.prepare_session();
-        
+
         // Enable accelerometer
         boardShim.config_board("n");
-        
+
         boardShim.start_stream();
-        
-        Thread.Sleep(5000);
-        
-        double[,] unprocessedData = boardShim.get_current_board_data(1);
-        int[] eeg_channels = BoardShim.get_eeg_channels(_boardId);
-        int[] accel_channels = BoardShim.get_accel_channels(_boardId);
 
-        foreach (var index in eeg_channels)
+        BoardControlLoop(boardShim, controller);
+
+        //Thread.Sleep(5000);
+    }
+
+    static void BoardControlLoop(BoardShim boardShim, IXbox360Controller controller)
+    {
+        while (true)
         {
-            var row = unprocessedData.GetRow(index);
-            
-            
-            // if (row[index] == match_action_value)
-            // {
-            //     controller.SetButtonState(Xbox360Button.A, true);
-            //     controller.SubmitReport();
-            // }
-            
-            
-            
-        }
+            Thread.Sleep(100);
+            double[,] unprocessedData = boardShim.get_current_board_data(1);
+            int[] emgChannels = BoardShim.get_emg_channels(_boardId);
+            int[] accel_channels = BoardShim.get_accel_channels(_boardId);
 
-        foreach (var index in accel_channels)
-        {
-            // SetAxisValue - 0 is left, 128 is middle, 255 is right
-            // if (row[index] == match_move_value)
-            // {
-            //     controller.SetAxisValue(Xbox360Axis.LeftThumbX, 0);
-            //     controller.SubmitReport();
-            // }
-        }
-    } 
+            Xbox360Button[] emg_buttons = [Xbox360Button.A, Xbox360Button.B, Xbox360Button.X, Xbox360Button.Y];
+            int buttonIndex = 0;
+            int threshold = 500;
+            foreach (var index in emgChannels)
+            {
+                var row = unprocessedData.GetRow(index);
+                controller.SetButtonState(emg_buttons[buttonIndex], Math.Abs(row[0]) > threshold);
+                Console.WriteLine($"Button {buttonIndex}: {row[0]} {Math.Abs(row[0]) > threshold}");
+                buttonIndex++;
+                // controller.SubmitReport();
+            }
 
-    
-    
-    
+            int gyroIndex = 0;
+            Xbox360Axis[] gyroAxies = [Xbox360Axis.LeftThumbX, Xbox360Axis.LeftThumbY];
+            foreach (var index in accel_channels)
+            {
+                if (gyroIndex < gyroAxies.Length)
+                {
+                    var row = unprocessedData.GetRow(index);
+                    double gyroValue = row[0];
+                    gyroValue = Math.Clamp(gyroValue, -1, 1);
+                    gyroValue = gyroValue * (32767.0);
+                    short finalGyroValue = Convert.ToInt16(gyroValue);
+                    controller.SetAxisValue(gyroAxies[gyroIndex], finalGyroValue);
+                    Console.WriteLine($"Gyro Value(index {gyroIndex}: {gyroValue}");
+                    // controller.SubmitReport();
+                }
+
+                gyroIndex++;
+            }
+
+            controller.SubmitReport();
+        }
+    }
+
+
     static void MonitorOutputReports(IDualShock4Controller ds4)
     {
         while (true)
@@ -86,7 +105,7 @@ class Program
 
                 if (timedOut)
                 {
-                   // Console.WriteLine("Timed out");
+                    // Console.WriteLine("Timed out");
                     continue;
                 }
 

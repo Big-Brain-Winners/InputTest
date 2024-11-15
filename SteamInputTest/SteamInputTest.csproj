@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="brainflow" Version="5.14.0" />
       <PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.256" />
       <PackageReference Include="Steamworks.NET" Version="2024.8.0" />
     </ItemGroup>

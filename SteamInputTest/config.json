@@ -1,0 +1,17 @@
+{
+  "BrainflowSettings": {
+    "BoardId": 1,
+    "SerialPort": "COM3",
+    "MacAddress": "ea:aa:58:a1:fe:8b"
+  },
+  "AdjustmentSettings": {
+    "PollingTime": 100,
+    "Threshold": 500,
+    "RollingAvgSize": 5,
+    "RollingAvgHead": 0,
+    "EmgChannels": 4,
+    "BaseOffsets": [
+      0,0
+    ]
+  }
+}

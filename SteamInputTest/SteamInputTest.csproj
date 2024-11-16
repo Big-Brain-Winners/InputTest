@@ -13,4 +13,10 @@
       <PackageReference Include="Steamworks.NET" Version="2024.8.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="config.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

@@ -160,7 +160,7 @@ class Program
             rollingAvgHead = (rollingAvgHead + 1) % rollingAvgSize;
 
             int gyroIndex = 0;
-            Xbox360Axis[] gyroAxies = [Xbox360Axis.LeftThumbX, Xbox360Axis.LeftThumbY];
+            Xbox360Axis[] gyroAxies = [Xbox360Axis.LeftThumbX, Xbox360Axis.RightThumbX, Xbox360Axis.LeftThumbY];
             foreach (var index in accel_channels)
             {
                 if (gyroIndex < gyroAxies.Length)
@@ -170,14 +170,16 @@ class Program
                     var avgVal = row.Average();
                     double gyroValue = avgVal;
                     gyroValue = Math.Clamp(gyroValue, -1, 1);
-                    gyroValue += 1; // offset to 0, 2
-                    gyroValue += offsets[gyroIndex]; // add offset
-                    gyroValue = gyroValue % 2; // wrap around
+                    if (gyroIndex == 0)
+                        gyroValue = gyroValue * -1;
+                    // gyroValue += 1; // offset to 0, 2
+                    // gyroValue += offsets[gyroIndex]; // add offset
+                    // gyroValue = gyroValue % 2; // wrap around
                     gyroValue = gyroValue * (signed16IntMax); // convert into range between 0 and 2x 16 bit limit
-                    gyroValue = gyroValue - signed16IntMax; // center back around 0;
+                    // gyroValue = gyroValue - signed16IntMax; // center back around 0;
                     short finalGyroValue = Convert.ToInt16(gyroValue);
                     controller.SetAxisValue(gyroAxies[gyroIndex], finalGyroValue);
-                    Console.WriteLine($"Gyro Value(index {gyroIndex}: {finalGyroValue}");
+                    Console.WriteLine($"Gyro Value(index {gyroIndex}: {gyroValue}");
                     // controller.SubmitReport();
                 }
 

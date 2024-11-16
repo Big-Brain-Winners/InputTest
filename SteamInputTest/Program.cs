@@ -13,7 +13,7 @@ class Program
 
     private static readonly BrainFlowInputParams _inputParams = new BrainFlowInputParams
     {
-        serial_port = "COM10"
+        serial_port = "COM5"
     };
 
     static void Main(string[] args)
@@ -160,7 +160,7 @@ class Program
             rollingAvgHead = (rollingAvgHead + 1) % rollingAvgSize;
 
             int gyroIndex = 0;
-            Xbox360Axis[] gyroAxies = [Xbox360Axis.LeftThumbX, Xbox360Axis.RightThumbX, Xbox360Axis.LeftThumbY];
+            Xbox360Axis?[] gyroAxies = [Xbox360Axis.LeftThumbX, null, Xbox360Axis.LeftThumbY];
             foreach (var index in accel_channels)
             {
                 if (gyroIndex < gyroAxies.Length)
@@ -178,8 +178,13 @@ class Program
                     gyroValue = gyroValue * (signed16IntMax); // convert into range between 0 and 2x 16 bit limit
                     // gyroValue = gyroValue - signed16IntMax; // center back around 0;
                     short finalGyroValue = Convert.ToInt16(gyroValue);
-                    controller.SetAxisValue(gyroAxies[gyroIndex], finalGyroValue);
-                    Console.WriteLine($"Gyro Value(index {gyroIndex}: {gyroValue}");
+                    if (gyroAxies[gyroIndex] != null)
+                    {
+                        controller.SetAxisValue(gyroAxies[gyroIndex], finalGyroValue);
+                        Console.WriteLine($"Gyro Value(index {gyroIndex}: {gyroValue}");
+                    }
+                    
+                    
                     // controller.SubmitReport();
                 }
 

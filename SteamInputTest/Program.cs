@@ -13,7 +13,8 @@ class Program
 
     private static readonly BrainFlowInputParams _inputParams = new BrainFlowInputParams
     {
-        serial_port = "COM5"
+        serial_port = "COM10",
+        mac_address = "ea:aa:58:a1:fe:8b"
     };
 
     static void Main(string[] args)

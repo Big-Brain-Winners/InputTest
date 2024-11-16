@@ -54,7 +54,6 @@ public class BoardController
         int pollingTime = _config.AdjustmentSettings.PollingTime;
         int threshold = _config.AdjustmentSettings.Threshold;
         int rollingAvgSize = _config.AdjustmentSettings.RollingAvgSize;
-        int rollingAvgHead = _config.AdjustmentSettings.RollingAvgHead;
         int emg_channel_count = _config.AdjustmentSettings.EmgChannels;
         List<double> offsets = _config.AdjustmentSettings.BaseOffsets;
         List<List<double>> rolling = new();
@@ -64,7 +63,7 @@ public class BoardController
             rolling.Add(new List<double>());
         }
 
-
+        int rollingAvgHead = 0;
         while (true)
         {
             Thread.Sleep(pollingTime);

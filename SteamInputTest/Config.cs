@@ -50,9 +50,6 @@ public class AdjustmentSettings
     [JsonPropertyName("RollingAvgSize")]
     public int RollingAvgSize { get; set; }
 
-    [JsonPropertyName("RollingAvgHead")]
-    public int RollingAvgHead { get; set; }
-
     [JsonPropertyName("EmgChannels")]
     public int EmgChannels { get; set; }
 

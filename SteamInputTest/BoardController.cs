@@ -51,12 +51,12 @@ public class BoardController
     
     void BoardControlLoop(BoardShim boardShim, IXbox360Controller controller)
     {
-        int pollingTime = 100;
-        int threshold = 500;
-        int rollingAvgSize = 5;
-        int rollingAvgHead = 0;
-        int emg_channel_count = 4;
-        List<double> offsets = [0, 0];
+        int pollingTime = _config.AdjustmentSettings.PollingTime;
+        int threshold = _config.AdjustmentSettings.Threshold;
+        int rollingAvgSize = _config.AdjustmentSettings.RollingAvgSize;
+        int rollingAvgHead = _config.AdjustmentSettings.RollingAvgHead;
+        int emg_channel_count = _config.AdjustmentSettings.EmgChannels;
+        List<double> offsets = _config.AdjustmentSettings.BaseOffsets;
         List<List<double>> rolling = new();
 
         for (int i = 0; i < emg_channel_count; i++)

@@ -16,6 +16,7 @@ public class XboxButtonControlOutput : XboxControlOutput
 
     public override void SendBinarySignal(bool value)
     {
+        Console.WriteLine($"Setting button {button.Name} to {value}");
         if (inverted) value = !value;
         this.controller.SetButtonState(button, value);
     }

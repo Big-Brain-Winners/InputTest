@@ -54,15 +54,13 @@ public class BoardController
     void BoardControlLoop(BoardShim boardShim, IXbox360Controller controller)
     {
         int pollingTime = _config.AdjustmentSettings.PollingTime;
-        int rollingAvgSize = _config.AdjustmentSettings.RollingAvgSize;
-
 
         Console.WriteLine("starting loop");
 
         List<Channel> channelHandlers = [];
         Xbox360Button[] availableButtons =
         [
-            Xbox360Button.A, Xbox360Button.B, Xbox360Button.X, Xbox360Button.Y, Xbox360Button.Left, Xbox360Button.Right,
+            Xbox360Button.A, Xbox360Button.X, Xbox360Button.Y, Xbox360Button.B, Xbox360Button.Left, Xbox360Button.Right,
             Xbox360Button.Up, Xbox360Button.Down, Xbox360Button.Back, Xbox360Button.Start, Xbox360Button.LeftShoulder,
             Xbox360Button.RightShoulder, Xbox360Button.LeftThumb, Xbox360Button.RightThumb, Xbox360Button.Guide
         ];
@@ -120,13 +118,6 @@ public class BoardController
                 var keypressed = Console.ReadKey().Key;
                 switch (keypressed)
                 {
-                    case ConsoleKey.Q:
-                        rollingAvgSize += 1;
-                        break;
-                    case ConsoleKey.A:
-                        if (rollingAvgSize > 1)
-                            rollingAvgSize -= 1;
-                        break;
                     case ConsoleKey.E:
                         pollingTime += 10;
                         break;
@@ -137,7 +128,6 @@ public class BoardController
                 }
             }
 
-            Console.WriteLine($"Rolling Avg Size: {rollingAvgSize}");
             Console.WriteLine($"PollingTime: {pollingTime}");
 
             foreach (var channelHandler in channelHandlers)

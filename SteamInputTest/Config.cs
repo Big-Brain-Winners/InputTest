@@ -66,7 +66,5 @@ public class BrainflowSettings
 public class AdjustmentSettings
 {
     [JsonPropertyName("PollingTime")] public int PollingTime { get; set; }
-
-    [JsonPropertyName("RollingAvgSize")] public int RollingAvgSize { get; set; }
-
+    
 }

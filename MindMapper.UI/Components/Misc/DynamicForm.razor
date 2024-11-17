@@ -1,0 +1,49 @@
+@page "/Config"
+@using System.Text.Json
+@using MindMapper.Common
+
+<h3>Dynamic Configuration Form</h3>
+
+<EditForm Model="@configData" OnValidSubmit="SaveConfiguration">
+    @Data
+    
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+
+    @if (configData != null)
+    {
+        <DynamicFieldRenderer TModel="Config" ObjectModel="@configData"/>
+    }
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</EditForm>
+
+@code {
+    private Config configData;
+    
+    public string Data { get; set; } = "";
+    
+    private JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        WriteIndented = true,
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/MindMapper";
+        var file = path + "/config.json";
+        
+        var jsonData = File.ReadAllText(file);
+
+        Data = jsonData;
+        configData = JsonSerializer.Deserialize<Config>(jsonData, JsonOptions);
+    }
+
+    private async Task SaveConfiguration()
+    {
+        var updatedJson = JsonSerializer.Serialize(configData, JsonOptions);
+        await File.WriteAllTextAsync("config.json", updatedJson);
+    }
+
+}

@@ -1,0 +1,72 @@
+@page "/GamepadViewer"
+
+@using System.Timers
+@using Toolbelt.Blazor.Gamepad
+@using MindMapper.UI.Components.Misc
+@implements IDisposable
+@inject GamepadList GamepadList
+
+@if (this._gamepad == null)
+{
+    <h1>No Control Device Connected</h1>
+    <p>Please connect the device and make any input to continue.</p>
+}
+
+
+@if (this._gamepad != null) {
+<h2>Axes</h2>
+  
+<div class="row">
+    @for (int i = 0,j = 0;  i < _gamepad.Axes.Count; i+=2,j++)
+    {
+        <div class="col border border-1">
+            <h4>Axis #@(j + 1)</h4>
+            <CircularAxisRender X="@_gamepad.Axes[i]" Y="@_gamepad.Axes[i + 1]"/>
+            <p>X: @_gamepad.Axes[i]</p>
+        </div>
+        
+    
+    }
+</div>
+    
+    
+<h2>Buttons</h2>   
+<div class="row mx-5 p-2">
+    @for (int i = 0; i < _gamepad.Buttons.Count; i++)
+    {
+        <div class="col-3 border border-1">
+            <h4>Button #@(i + 1)</h4>
+            <ButtonPressRender PressedAmount="@_gamepad.Buttons[i].Value" R="255" G="0" B="255"/>
+            <p>Value: @_gamepad.Buttons[i].Value (@_gamepad.Buttons[i].Pressed)</p>
+        </div>
+    
+    }
+
+</div>
+
+}
+
+@code {
+    private Gamepad? _gamepad;
+    private readonly Timer _timer = new Timer(200) { Enabled = true };
+    
+    protected override void OnInitialized()
+    {
+        _timer.Elapsed += TimerElapsed;
+    }
+    
+    private async void TimerElapsed(object sender, ElapsedEventArgs e)
+    {
+        var gamepads = await GamepadList.GetGamepadsAsync();
+        _gamepad = gamepads.FirstOrDefault();
+        if (_gamepad != null) 
+            await this.InvokeAsync(() => this.StateHasChanged());
+    }
+    
+    public void Dispose()
+    {
+        _timer.Elapsed -= TimerElapsed;
+        _timer.Dispose();
+    }
+
+}

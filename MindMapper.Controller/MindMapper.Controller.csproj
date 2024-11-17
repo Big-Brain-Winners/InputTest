@@ -5,6 +5,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RootNamespace>MindMapper.Controller</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,9 +15,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="config.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
+      <ProjectReference Include="..\MindMapper.Common\MindMapper.Common.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\MindMapper.Common\MindMapper.Common.csproj" />
     </ItemGroup>
 
 </Project>

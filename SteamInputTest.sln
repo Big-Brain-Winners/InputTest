@@ -1,6 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamInputTest", "SteamInputTest\SteamInputTest.csproj", "{04412064-012D-4231-BCAD-05CE26FA56D5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MindMapper.Controller", "MindMapper.Controller\MindMapper.Controller.csproj", "{04412064-012D-4231-BCAD-05CE26FA56D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MindMapper.UI", "MindMapper.UI\MindMapper.UI.csproj", "{67A86D9F-4265-49AD-ADEC-FED83E9FFB7B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MindMapper.Common", "MindMapper.Common\MindMapper.Common.csproj", "{A80BE9F8-2139-4CEB-BDD2-EC7917D26DA3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +16,13 @@ Global
 		{04412064-012D-4231-BCAD-05CE26FA56D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04412064-012D-4231-BCAD-05CE26FA56D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04412064-012D-4231-BCAD-05CE26FA56D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67A86D9F-4265-49AD-ADEC-FED83E9FFB7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67A86D9F-4265-49AD-ADEC-FED83E9FFB7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67A86D9F-4265-49AD-ADEC-FED83E9FFB7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67A86D9F-4265-49AD-ADEC-FED83E9FFB7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A80BE9F8-2139-4CEB-BDD2-EC7917D26DA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A80BE9F8-2139-4CEB-BDD2-EC7917D26DA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A80BE9F8-2139-4CEB-BDD2-EC7917D26DA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A80BE9F8-2139-4CEB-BDD2-EC7917D26DA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace SteamInputTest;
+namespace MindMapper.Common;
 
 public class Config
 {
@@ -25,21 +25,33 @@ public class Config
 
         return config;
     }
+
+    public static void CopyToAppData()
+    {
+        var path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/MindMapper";
+        var file = path + "/config.json";
+        
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+        
+        if (!File.Exists(file))
+        {
+            var conf = Config.Load("config.json");
+            var json = JsonSerializer.Serialize(conf);
+            File.WriteAllText(file, json);
+        }
+    }
 }
 
-public enum controlTypeCode
-{
-    none = -1,
-    button = 0,
-    axis = 1,
-    slider = 2,
-}
+
 
 
 public class BindingSettings
 {
-    [JsonPropertyName("ControlType")] public controlTypeCode ControlType { get; set; }
-    [JsonPropertyName("ChannelType")] public channelType ChannelType { get; set; } = channelType.Null;
+    [JsonPropertyName("ControlType")] public ControlTypeCode ControlType { get; set; }
+    [JsonPropertyName("ChannelType")] public ChannelType ChannelType { get; set; } = ChannelType.Null;
 
     [JsonPropertyName("ControlIndex")] public int ControlIndex { get; set; } = 0;
 

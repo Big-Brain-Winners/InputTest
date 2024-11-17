@@ -1,0 +1,30 @@
+@if (ArrayModel is Array array && ElementType != null)
+{
+    <div>
+        @for (var i = 0; i < array.Length; i++)
+        {
+            <div class="mb-3">
+                <label>Index @i</label>
+                <InputText Value="@(array.GetValue(i)?.ToString())"
+                           ValueChanged="value => UpdateArrayValue(array, i, value, ElementType)"
+                           class="form-control"/>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public object ArrayModel { get; set; }
+
+    [Parameter] public Type ElementType { get; set; }
+
+    private void UpdateArrayValue(Array array, int index, object value, Type elementType)
+    {
+        if (elementType != null)
+        {
+            var convertedValue = Convert.ChangeType(value, elementType);
+            array.SetValue(convertedValue, index);
+        }
+    }
+
+}

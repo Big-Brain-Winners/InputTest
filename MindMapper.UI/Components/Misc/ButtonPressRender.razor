@@ -1,0 +1,47 @@
+<style>
+    .buttonCircle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 2px solid #ccc;
+        position: relative;
+        margin: 0 auto;
+    }
+    .buttonPress {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+    }
+</style>
+
+<div class="buttonCircle">
+    <div class="buttonPress" style="@GetButtonPressStyle()"></div>
+</div>
+
+@code {
+    private readonly double maxVal = 1;
+    private readonly double minVal = 0;
+
+    private double _pressedAmount = 0;
+
+    [Parameter] public double PressedAmount { get; set; }
+    [Parameter] public short R { get; set; }
+    [Parameter] public short G { get; set; }
+    [Parameter] public short B { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        _pressedAmount = Math.Clamp(PressedAmount, minVal, maxVal);
+        base.OnParametersSet();
+    }
+
+    private string GetButtonPressStyle()
+    {
+        double alpha = Math.Clamp(_pressedAmount, 0, 1);
+    
+        // Return the RGBA color with calculated alpha
+        string color = $"rgba({R}, {G}, {B}, {alpha})";
+        return $"background-color: {color};";
+    }
+
+}

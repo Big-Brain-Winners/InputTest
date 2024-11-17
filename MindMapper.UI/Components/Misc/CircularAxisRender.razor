@@ -1,0 +1,50 @@
+@code {
+    private readonly int maxVal = 1;
+    private readonly int minVal = -1;
+    private double _y = 0;
+    private double _x = 0;
+    
+    [Parameter] public double Y { get; set; }
+    [Parameter] public double X { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        _y = -Y;
+        _x = X;
+        base.OnParametersSet();
+    }
+
+    private string GetDotPositionStyle()
+    {
+        // Scale X and Y to fit within the circle dimensions
+        double scaleX = 50 + (_x * 50); // X value maps to -50 to +50
+        double scaleY = 50 - (_y * 50); // Y value maps to +50 to -50 (inverted for CSS top)
+
+        return $"left: {scaleX}%; top: {scaleY}%;";
+    }
+}
+
+<div class="circle-controller">
+    <div class="dot" style="@GetDotPositionStyle()"></div>
+</div>
+
+<style>
+    .circle-controller {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background-color: #f0f0f0;
+        border: 2px solid #ccc;
+        position: relative;
+        margin: 0 auto;
+    }
+
+    .dot {
+        width: 20px;
+        height: 20px;
+        background-color: #007bff;
+        border-radius: 50%;
+        position: absolute;
+        transform: translate(-50%, -50%);
+    }
+</style>

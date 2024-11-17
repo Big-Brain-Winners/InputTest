@@ -1,4 +1,4 @@
-namespace SteamInputTest;
+namespace MindMapper.Controller;
 
 public abstract class ControlOutput
 {

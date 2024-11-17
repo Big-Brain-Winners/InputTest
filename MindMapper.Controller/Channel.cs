@@ -1,14 +1,10 @@
 using brainflow.math;
+using MindMapper.Common;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 
-namespace SteamInputTest;
+namespace MindMapper.Controller;
 
-public enum channelType
-{
-    Null = -1,
-    Emg = 0,
-    Accelerometer = 1
-}
+
 
 class Channel
 {
@@ -22,7 +18,7 @@ class Channel
     private bool _absoluteInput;
 
 
-    public Channel(int channelIndex, Config config, channelType channelType, ControlOutput controlOutput, bool binary)
+    public Channel(int channelIndex, Config config, ChannelType channelType, ControlOutput controlOutput, bool binary)
     {
         _index = channelIndex;
         this._config = config;
@@ -31,13 +27,13 @@ class Channel
         _rollingWindowHeadIdx = 0;
         _rollingAvgWindow = new List<double>();
 
-        if (channelType == channelType.Emg)
+        if (channelType == ChannelType.Emg)
         {
             _inputRange[0] = 0;
             _inputRange[1] = 5000; //todo make high end configurable
             _absoluteInput = true;
         }
-        else if (channelType == channelType.Accelerometer)
+        else if (channelType == ChannelType.Accelerometer)
         {
             _inputRange[0] = -1;
             _inputRange[1] = 1;

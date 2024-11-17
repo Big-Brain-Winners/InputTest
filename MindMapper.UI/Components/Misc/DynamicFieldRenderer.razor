@@ -1,0 +1,130 @@
+@using System.Collections
+@typeparam TModel
+
+@if (ObjectModel != null)
+{
+    foreach (var property in ObjectModel.GetType().GetProperties())
+    {
+        <div class="mb-3">
+            <label>@property.Name</label>
+
+            @if (property.PropertyType == typeof(string))
+            {
+                string value = Proxy.Get<string>(property.Name);
+                <InputText Value="@value"
+                           ValueChanged="@((string newValue) => Proxy.Set(property.Name, newValue))"
+                           ValueExpression="@(() => value)"
+                           class="form-control" />
+            }
+            else if (property.PropertyType == typeof(int))
+            {
+                int value = Proxy.Get<int>(property.Name);
+                <InputNumber Value="@value"
+                             ValueChanged="@((int newValue) => Proxy.Set(property.Name, newValue))"
+                             ValueExpression="@(() => value)"
+                             class="form-control" />
+            }
+            else if (property.PropertyType == typeof(bool))
+            {
+                bool value = Proxy.Get<bool>(property.Name);
+                <InputCheckbox Value="@value"
+                               ValueChanged="@((bool newValue) => Proxy.Set(property.Name, newValue))"
+                               ValueExpression="@(() => value)"
+                               class="form-check-input" />
+            }
+            else if (typeof(IEnumerable).IsAssignableFrom(property.PropertyType) && property.PropertyType != typeof(string))
+            {
+                // Handle collections
+                var collection = property.GetValue(ObjectModel) as IEnumerable;
+                if (collection != null)
+                {
+                    int index = 0;
+                    foreach (var item in collection)
+                    {
+                        <fieldset class="border p-2 mb-2">
+                            <legend>Item @index++</legend>
+                            <DynamicFieldRenderer ObjectModel="@item" />
+                        </fieldset>
+                    }
+                }
+            }
+            else if (property.PropertyType.IsClass)
+            {
+                // Handle nested objects
+                <DynamicFieldRenderer ObjectModel="@property.GetValue(ObjectModel)" />
+            }
+        </div>
+    }
+
+    <button class="btn btn-primary" @onclick="SaveChanges">Save</button>
+}
+
+
+@code {
+    [Parameter] public TModel ObjectModel { get; set; }
+
+    private ProxyWrapper Proxy;
+
+    protected override void OnParametersSet()
+    {
+        if (ObjectModel != null)
+        {
+            Proxy = new ProxyWrapper(ObjectModel);
+        }
+    }
+
+    private void SaveChanges()
+    {
+        Proxy.Save();
+    }
+
+    public class ProxyWrapper
+    {
+        private readonly object _target;
+        private readonly Dictionary<string, object> _state = new();
+
+        public ProxyWrapper(object target)
+        {
+            _target = target;
+
+            foreach (var property in _target.GetType().GetProperties())
+            {
+                if (property.CanRead)
+                {
+                    _state[property.Name] = property.GetValue(_target) ?? GetDefaultValue(property.PropertyType);
+                }
+            }
+        }
+
+        public T Get<T>(string propertyName)
+        {
+            return _state.ContainsKey(propertyName) && _state[propertyName] is T value ? value : default;
+        }
+
+        public void Set<T>(string propertyName, T value)
+        {
+            if (_state.ContainsKey(propertyName))
+            {
+                _state[propertyName] = value;
+            }
+        }
+
+        public void Save()
+        {
+            foreach (var property in _target.GetType().GetProperties())
+            {
+                if (property.CanWrite && _state.ContainsKey(property.Name))
+                {
+                    var value = _state[property.Name];
+                    property.SetValue(_target, Convert.ChangeType(value, property.PropertyType));
+                }
+            }
+        }
+
+        private static object GetDefaultValue(Type type)
+        {
+            return type.IsValueType ? Activator.CreateInstance(type) : null;
+        }
+    }
+
+}

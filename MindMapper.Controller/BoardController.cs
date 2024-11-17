@@ -1,10 +1,11 @@
 ﻿using brainflow;
 using brainflow.math;
+using MindMapper.Common;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 
-namespace SteamInputTest;
+namespace MindMapper.Controller;
 
 public class BoardController
 {
@@ -14,7 +15,9 @@ public class BoardController
 
     public BoardController()
     {
-        _config = Config.Load("config.json");
+        var appRoot = AppDomain.CurrentDomain.BaseDirectory;
+        var configPath = Path.Combine(appRoot, "config.json");
+        _config = Config.Load(configPath);
         _inputParams = new BrainFlowInputParams()
         {
             serial_port = _config.BrainflowSettings.SerialPort,
@@ -72,17 +75,17 @@ public class BoardController
         for (int i = 0; i < _config.Bindings.Count; i++)
         {
             var binding = _config.Bindings[i];
-            if (binding.ControlType == controlTypeCode.none) continue;
-            if (binding.ChannelType == channelType.Null) throw new ArgumentNullException(nameof(binding.ChannelType));
+            if (binding.ControlType == ControlTypeCode.none) continue;
+            if (binding.ChannelType == ChannelType.Null) throw new ArgumentNullException(nameof(binding.ChannelType));
             
             ControlOutput channelControlOutput;
 
-            if (binding.ControlType == controlTypeCode.button)
+            if (binding.ControlType == ControlTypeCode.button)
             {
                 channelControlOutput = new XboxButtonControlOutput(availableButtons[binding.ControlIndex], controller,
                     binding.Inverted);
             }
-            else if (binding.ControlType == controlTypeCode.axis)
+            else if (binding.ControlType == ControlTypeCode.axis)
             {
                 Console.WriteLine("Adding an axis");
                 channelControlOutput =
@@ -91,7 +94,7 @@ public class BoardController
                 Console.WriteLine("Inverted? " + binding.Inverted);
                 
             }
-            else if (binding.ControlType == controlTypeCode.slider)
+            else if (binding.ControlType == ControlTypeCode.slider)
             {
                 channelControlOutput = new XboxSliderControlOutput(availableSliders[binding.ControlIndex], controller,
                     binding.Inverted);

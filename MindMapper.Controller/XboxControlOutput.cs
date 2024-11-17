@@ -1,6 +1,6 @@
 using Nefarius.ViGEm.Client.Targets;
 
-namespace SteamInputTest;
+namespace MindMapper.Controller;
 
 public abstract class XboxControlOutput : ControlOutput
 {

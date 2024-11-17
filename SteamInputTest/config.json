@@ -1,7 +1,7 @@
 {
   "BrainflowSettings": {
     "BoardId": 1,
-    "SerialPort": "COM3",
+    "SerialPort": "COM10",
     "MacAddress": "ea:aa:58:a1:fe:8b"
   },
   "AdjustmentSettings": {

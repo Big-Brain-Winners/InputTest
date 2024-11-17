@@ -1,0 +1,3 @@
+0: ?
+1 - 4: EMG
+5-7: Accel (5 X axis, 6 garbage, 7 Y Axis)

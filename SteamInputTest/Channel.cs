@@ -3,10 +3,11 @@ using Nefarius.ViGEm.Client.Targets.Xbox360;
 
 namespace SteamInputTest;
 
-enum channelType
+public enum channelType
 {
-    Emg,
-    Accelerometer
+    Null = -1,
+    Emg = 0,
+    Accelerometer = 1
 }
 
 class Channel

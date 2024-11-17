@@ -23,7 +23,7 @@ public class BoardController
     }
 
     public void Start()
-    {   
+    {
         Console.Write($"using com port ${_config.BrainflowSettings.SerialPort}\n");
         BoardShim.enable_dev_board_logger();
         BoardShim boardShim = new BoardShim(_config.BrainflowSettings.BoardId, _inputParams);
@@ -54,33 +54,59 @@ public class BoardController
     void BoardControlLoop(BoardShim boardShim, IXbox360Controller controller)
     {
         int pollingTime = _config.AdjustmentSettings.PollingTime;
-        int threshold = _config.AdjustmentSettings.Threshold;
         int rollingAvgSize = _config.AdjustmentSettings.RollingAvgSize;
-        int emg_channel_count = _config.AdjustmentSettings.EmgChannels;
-        List<double> offsets = _config.AdjustmentSettings.BaseOffsets;
-        
+
 
         Console.WriteLine("starting loop");
 
         List<Channel> channelHandlers = [];
-        Xbox360Button[] emg_buttons = [Xbox360Button.A, Xbox360Button.B, Xbox360Button.X, Xbox360Button.Y];
-        int[] emgChannels = BoardShim.get_emg_channels(_config.BrainflowSettings.BoardId);
-        
-        for (int i = 0; i < emg_channel_count; i++)
+        Xbox360Button[] availableButtons =
+        [
+            Xbox360Button.A, Xbox360Button.B, Xbox360Button.X, Xbox360Button.Y, Xbox360Button.Left, Xbox360Button.Right,
+            Xbox360Button.Up, Xbox360Button.Down, Xbox360Button.Back, Xbox360Button.Start, Xbox360Button.LeftShoulder,
+            Xbox360Button.RightShoulder, Xbox360Button.LeftThumb, Xbox360Button.RightThumb, Xbox360Button.Guide
+        ];
+        Xbox360Axis[] availableAxies =
+        [
+            Xbox360Axis.LeftThumbX, Xbox360Axis.LeftThumbY, Xbox360Axis.RightThumbX, Xbox360Axis.RightThumbY
+        ];
+        Xbox360Slider[] availableSliders = [Xbox360Slider.LeftTrigger, Xbox360Slider.RightTrigger];
+        for (int i = 0; i < _config.Bindings.Count; i++)
         {
-            ControlOutput channelControlOutput = new XboxButtonControlOutput(emg_buttons[i], controller, false);
-            channelHandlers.Add(new Channel(emgChannels[i], _config, channelType.Emg, channelControlOutput, true));
-        }
-        
-        Xbox360Axis?[] gyroAxies = [Xbox360Axis.LeftThumbX, null, Xbox360Axis.LeftThumbY];
-        int[] accel_channels = BoardShim.get_accel_channels(_config.BrainflowSettings.BoardId);
-        for (int i = 0; i < accel_channels.Count(); i++)
-        {
-            if (gyroAxies[i] == null) continue;
-            bool inverted = i == 0; //need to invert x axis
-            ControlOutput channelControlOutput = new XboxAxisControlOutput(gyroAxies[i], controller, inverted);
-            channelHandlers.Add(
-                new Channel(accel_channels[i], _config, channelType.Accelerometer, channelControlOutput, false));
+            var binding = _config.Bindings[i];
+            if (binding.ControlType == controlTypeCode.none) continue;
+            if (binding.ChannelType == channelType.Null) throw new ArgumentNullException(nameof(binding.ChannelType));
+            
+            ControlOutput channelControlOutput;
+
+            if (binding.ControlType == controlTypeCode.button)
+            {
+                channelControlOutput = new XboxButtonControlOutput(availableButtons[binding.ControlIndex], controller,
+                    binding.Inverted);
+            }
+            else if (binding.ControlType == controlTypeCode.axis)
+            {
+                Console.WriteLine("Adding an axis");
+                channelControlOutput =
+                    new XboxAxisControlOutput(availableAxies[binding.ControlIndex], controller, binding.Inverted);
+                Console.WriteLine("routing output to " + availableAxies[binding.ControlIndex].Name);
+                Console.WriteLine("Inverted? " + binding.Inverted);
+                
+            }
+            else if (binding.ControlType == controlTypeCode.slider)
+            {
+                channelControlOutput = new XboxSliderControlOutput(availableSliders[binding.ControlIndex], controller,
+                    binding.Inverted);
+            }
+            else
+            {
+                throw new Exception($"Unknown control type {binding.ControlType}");
+            }
+            
+            
+            
+            channelHandlers.Add(new Channel(i, _config, binding.ChannelType, channelControlOutput, !binding.Analog));
+            Console.WriteLine($"Channel #{i}: {binding.ChannelType} {binding.Analog}");
         }
 
         while (true)
@@ -94,12 +120,6 @@ public class BoardController
                 var keypressed = Console.ReadKey().Key;
                 switch (keypressed)
                 {
-                    case ConsoleKey.W:
-                        threshold += 50;
-                        break;
-                    case ConsoleKey.S:
-                        threshold -= 50;
-                        break;
                     case ConsoleKey.Q:
                         rollingAvgSize += 1;
                         break;
@@ -114,26 +134,11 @@ public class BoardController
                         if (pollingTime > 10)
                             pollingTime -= 10;
                         break;
-                    case ConsoleKey.R:
-                        offsets[0] += 0.05;
-                        break;
-                    case ConsoleKey.F:
-                        offsets[0] -= 0.05;
-                        break;
-                    case ConsoleKey.T:
-                        offsets[1] += 0.05;
-                        break;
-                    case ConsoleKey.G:
-                        offsets[1] -= 0.05;
-                        break;
                 }
             }
 
-            Console.WriteLine($"Threshold: {threshold}");
-            Console.WriteLine($"Rolling Avg Size: {rollingAvgSize}");
-            Console.WriteLine($"PollingTIme: {pollingTime}");
-            Console.WriteLine($"XOffset: {offsets[0]}");
-            Console.WriteLine($"YOffset: {offsets[1]}");
+            // Console.WriteLine($"Rolling Avg Size: {rollingAvgSize}");
+            // Console.WriteLine($"PollingTime: {pollingTime}");
 
             foreach (var channelHandler in channelHandlers)
             {

@@ -47,7 +47,9 @@ public class BindingSettings
 
     [JsonPropertyName("Analog")] public bool Analog { get; set; } = false;
 
-    [JsonPropertyName("threshold")] public int? Threshold { get; set; }
+    [JsonPropertyName("Threshold")] public int? Threshold { get; set; }
+    
+    [JsonPropertyName("RollingAvgSize")] public int RollingAvgSize { get; set; } = 1;
 
     [JsonPropertyName("BaseOffsets")] public double Offsets { get; set; } = 0.0; //todo reimplement offsets on analog signals
 }
@@ -64,8 +66,6 @@ public class BrainflowSettings
 public class AdjustmentSettings
 {
     [JsonPropertyName("PollingTime")] public int PollingTime { get; set; }
-
-    [JsonPropertyName("Threshold")] public int Threshold { get; set; }
 
     [JsonPropertyName("RollingAvgSize")] public int RollingAvgSize { get; set; }
 

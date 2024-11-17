@@ -137,8 +137,8 @@ public class BoardController
                 }
             }
 
-            // Console.WriteLine($"Rolling Avg Size: {rollingAvgSize}");
-            // Console.WriteLine($"PollingTime: {pollingTime}");
+            Console.WriteLine($"Rolling Avg Size: {rollingAvgSize}");
+            Console.WriteLine($"PollingTime: {pollingTime}");
 
             foreach (var channelHandler in channelHandlers)
             {

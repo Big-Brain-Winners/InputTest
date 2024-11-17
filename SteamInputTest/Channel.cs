@@ -71,7 +71,7 @@ class Channel
 
         // get rolling average
         double rollingAvgSum = 0;
-        for (int i = 0; i < _config.AdjustmentSettings.RollingAvgSize; i++) //todo make this a per-channel config
+        for (int i = 0; i < _config.Bindings[_index].RollingAvgSize; i++)
         {
             if (i >= _rollingAvgWindow.Count)
             {
@@ -83,12 +83,12 @@ class Channel
             }
         }
 
-        double rollingAvg = rollingAvgSum / _config.AdjustmentSettings.RollingAvgSize; //todo make this a per-channel config
+        double rollingAvg = rollingAvgSum / _config.Bindings[_index].RollingAvgSize;
 
 
         if (_binary)
         {
-            bool binaryVal = rollingAvg > _config.AdjustmentSettings.Threshold; //todo make the threshold a per-channel config
+            bool binaryVal = rollingAvg > _config.Bindings[_index].Threshold; 
             _controlOutput.SendBinarySignal(binaryVal);
         }
         else

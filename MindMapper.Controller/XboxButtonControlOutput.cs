@@ -20,4 +20,11 @@ public class XboxButtonControlOutput : XboxControlOutput
         if (inverted) value = !value;
         this.controller.SetButtonState(button, value);
     }
+    
+    public override void Neutralize()
+    {
+        this.controller.SetButtonState(button, false);
+    }
+    
+    
 }

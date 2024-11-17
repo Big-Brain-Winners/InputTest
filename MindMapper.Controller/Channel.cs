@@ -93,4 +93,11 @@ class Channel
         }
         
     }
+
+    public void Neutralize()
+    {
+        _controlOutput.Neutralize();
+    }
+    
+    
 }

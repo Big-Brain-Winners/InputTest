@@ -34,4 +34,9 @@ public class XboxSliderControlOutput : XboxControlOutput
             this.controller.SetSliderValue(slider, Convert.ToByte(0));
         }
     }
+    
+    public override void Neutralize()
+    {
+        this.controller.SetSliderValue(slider, Convert.ToByte(0));
+    }
 }

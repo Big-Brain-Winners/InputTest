@@ -17,4 +17,9 @@ public abstract class ControlOutput
     {
         throw new NotImplementedException("This control type does not support binary signals.");
     }
+    // sets any outputs to 0
+    public virtual void Neutralize()
+    {
+        throw new NotImplementedException("This control type does not support controls.");
+    }
 }

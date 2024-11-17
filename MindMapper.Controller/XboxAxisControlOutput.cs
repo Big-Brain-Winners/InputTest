@@ -28,11 +28,12 @@ public class XboxAxisControlOutput : XboxControlOutput
 
     public override void SendBinarySignal(bool value)
     {
-        if (inverted) value = !value;
         Console.WriteLine($"Setting axis {axis.Name} to binary value {value}");
         if (value)
         {
-            this.controller.SetAxisValue(axis, Convert.ToInt16(32767));
+            int outVal = 32767;
+            if (inverted) outVal = outVal * -1;
+            this.controller.SetAxisValue(axis, Convert.ToInt16(outVal));
         }
         else
         {

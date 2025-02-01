@@ -35,16 +35,20 @@ The Required BrainflowSettings Attributes are:
 Finally, each configuration file must contain a Root Element "Bindings", which is a list of instruction objects containing information on how to handle each channel of output from the OpenBCI peripheral. The index of the instruction object correlates to the channel it governs, any channels with indexes outside of the "Bindings" list will be ignored.
 
 Each instruction object will have the following attributes:
+
 "ControlType": Integer. This indicates the type of XInput output you wish the channel to be routed to. It's options are:
+```
   -1: Null, this indicates you wish to ignore the channel. if ControlType is set to this, all other attributes are optional and ignored
   0: Button. See "Button options" for list of available buttons
   1: Axis See "Axis Options" for list of available Axies
   2: Slider See "Slider Options" for list of available sliders
+```
 
 "ChannelType": Integer. This indicates the type of the input channel, which influences how incoming data is processed.  Currently supported options are:
+```
 0: EMG channel
 1: Accelerometer Channel
-
+```
 "ControlIndex": Integer. This indicates which output of type "ControlType" the output should be routed to, indexed into the correlated "options" list.
 
 "Inverted": Boolean, optional, defaullt False. This flips the typical behaviour of the channel output. For buttons, this flips the boolean value sent to the button. For Axies this multiplies the output by -1, changing one extreme to another. For sliders this sets the output value to be Max_value - outputValue

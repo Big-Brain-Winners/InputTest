@@ -80,7 +80,7 @@ class Channel
         }
 
         double rollingAvg = rollingAvgSum / _config.Bindings[_index].RollingAvgSize;
-        Console.Write($"Channel {_index}: {rollingAvg}.  ");
+        Console.Write($"Channel {_index}: {rollingAvg.ToString("N2")}.  ");
 
         if (_binary)
         {

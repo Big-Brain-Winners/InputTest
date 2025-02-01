@@ -70,7 +70,7 @@ public class BoardController
         Console.WriteLine("starting loop");
         BuildHandlers();
 
-
+        Console.Clear();
         while (true)
         {
             Thread.Sleep(pollingTime);
@@ -103,7 +103,7 @@ public class BoardController
                         break;
                 }
             }
-
+            Console.SetCursorPosition(0, 0);
             Console.WriteLine($"PollingTime: {pollingTime}");
             String configFileListString = "[ \"" + String.Join("\" , \"", configFiles.ToArray()) + "\" ]";
             Console.WriteLine($"Detected Configurations: {configFileListString}");
